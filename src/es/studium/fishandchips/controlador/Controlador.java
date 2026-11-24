@@ -1,6 +1,7 @@
 package es.studium.fishandchips.controlador;
 
 import es.studium.fishandchips.Opciones;
+import es.studium.fishandchips.modelo.Comida;
 import es.studium.fishandchips.modelo.Modelo;
 import es.studium.fishandchips.modelo.PezEnemigo;
 import es.studium.fishandchips.modelo.PezJugador;
@@ -38,6 +39,7 @@ public class Controlador implements KeyListener {
 
         panel.setPezJugador(pezJugador);
         panel.setEnemigos(modelo.getEnemigos());
+        panel.setComidas(modelo.getComidas());
 
         panel.addKeyListener(this);
         panel.setFocusable(true);
@@ -147,6 +149,19 @@ public class Controlador implements KeyListener {
                 } else {
                     Sonido.reproducir(Opciones.SONIDO_COMIDO);
                     modelo.terminarPartida(false);
+                    return;
+                }
+            }
+        }
+        for (Comida comida : modelo.getComidas()) {
+            Rectangle rComida = new Rectangle(
+                    comida.getPosX(), comida.getPosY(), comida.getLado(), comida.getLado());
+            if (rJugador.intersects(rComida)) {
+                modelo.getComidas().remove(comida);
+                pezJugador.setSize(pezJugador.getSize() + comida.getSize());
+                Sonido.reproducir(Opciones.SONIDO_COMER);
+                if (pezJugador.getSize() >= Opciones.TAMANO_VICTORIA) {
+                    modelo.terminarPartida(true);
                     return;
                 }
             }

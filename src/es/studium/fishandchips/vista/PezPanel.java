@@ -1,6 +1,7 @@
 package es.studium.fishandchips.vista;
 
 import es.studium.fishandchips.Opciones;
+import es.studium.fishandchips.modelo.Comida;
 import es.studium.fishandchips.modelo.Entidad;
 import es.studium.fishandchips.modelo.PezEnemigo;
 import es.studium.fishandchips.modelo.PezJugador;
@@ -16,12 +17,14 @@ import java.util.Map;
 public class PezPanel extends JPanel {
     private PezJugador pezJugador;
     private List<PezEnemigo> enemigos;
+    private List<Comida> comidas;
 
     private final Map<String, BufferedImage> imagenes = new HashMap<>();
     private final BufferedImage fondo;
 
     public PezPanel() {
         imagenes.put(Opciones.SPRITE_JUGADOR, leerImagen(Opciones.SPRITE_JUGADOR));
+        imagenes.put(Opciones.SPRITE_COMIDA, leerImagen(Opciones.SPRITE_COMIDA));
         for (String sprite : Opciones.SPRITES_ENEMIGOS) {
             imagenes.put(sprite, leerImagen(sprite));
         }
@@ -43,6 +46,12 @@ public class PezPanel extends JPanel {
         if (fondo != null) {
             g.drawImage(fondo, 0, 0, getWidth(), getHeight(), null);
         }
+        if (comidas != null) {
+            for (Comida c : comidas) {
+                dibujarPez(g, c, false);
+            }
+        }
+
         if (enemigos != null) {
             for (PezEnemigo enemigo : enemigos) {
                 dibujarPez(g, enemigo, enemigo.getDireccion() < 0);
@@ -74,5 +83,8 @@ public class PezPanel extends JPanel {
 
     public void setEnemigos(List<PezEnemigo> enemigos) {
         this.enemigos = enemigos;
+    }
+    public void setComidas(List<Comida> comidas) {
+        this.comidas = comidas;
     }
 }

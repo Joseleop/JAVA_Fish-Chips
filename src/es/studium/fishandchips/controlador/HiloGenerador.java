@@ -23,6 +23,10 @@ public class HiloGenerador implements Runnable {
                 modelo.getEnemigos().add(enemigo);
                 new Thread(new HiloEnemigo(enemigo, modelo, panel)).start();
             }
+            if (modelo.getComidas().size() < Opciones.GENERADOR_MAX_COMIDA) {
+                modelo.getComidas().add(
+                        modelo.crearComidaAleatoria(panel.getWidth(), panel.getHeight()));
+            }
             try {
                 Thread.sleep(Opciones.GENERADOR_INTERVALO_MS);
             } catch (InterruptedException e) {

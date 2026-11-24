@@ -13,6 +13,7 @@ public class Modelo {
     private volatile boolean victoria = false;
     private PezJugador pezJugador;
     private List<PezEnemigo> enemigos = new CopyOnWriteArrayList<>();
+    private final List<Comida> comidas = new CopyOnWriteArrayList<>();
 
     public Modelo() {
         pezJugador = new PezJugador(Opciones.JUGADOR_POS_X_INICIAL, Opciones.JUGADOR_POS_Y_INICIAL,
@@ -75,8 +76,19 @@ public class Modelo {
         this.enPartida = false;
     }
 
+    public List<Comida> getComidas() {
+        return comidas;
+    }
+
+    public Comida crearComidaAleatoria(int anchoPanel, int altoPanel) {
+        int x = random.nextInt(Math.max(1, anchoPanel - Opciones.COMIDA_LADO));
+        int y = random.nextInt(Math.max(1, altoPanel - Opciones.COMIDA_LADO));
+        return new Comida(x, y, Opciones.SPRITE_COMIDA);
+    }
+
     public synchronized void reiniciar() {
         enemigos.clear();
+        comidas.clear();
         pezJugador.setPosX(Opciones.JUGADOR_POS_X_INICIAL);
         pezJugador.setPosY(Opciones.JUGADOR_POS_Y_INICIAL);
         pezJugador.setSize(Opciones.JUGADOR_TAMANO_INICIAL);

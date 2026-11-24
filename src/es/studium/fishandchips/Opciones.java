@@ -56,4 +56,9 @@ public final class Opciones {
     public static final String SONIDO_COMER = "/sonido_comer.wav";
     public static final String SONIDO_COMIDO = "/sonido_comido.wav";
     public static final String MUSICA_FONDO = "/bg_musica.wav";
+
+    // Comida
+    public static final String SPRITE_COMIDA = "/comida_chip.png";
+    public static final int COMIDA_LADO = 32;             // píxeles fijos
+    public static final int GENERADOR_MAX_COMIDA = 8;
 }
