@@ -1,10 +1,7 @@
 package es.studium.fishandchips.vista;
 
 import es.studium.fishandchips.Opciones;
-import es.studium.fishandchips.modelo.Comida;
-import es.studium.fishandchips.modelo.Entidad;
-import es.studium.fishandchips.modelo.PezEnemigo;
-import es.studium.fishandchips.modelo.PezJugador;
+import es.studium.fishandchips.modelo.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -18,6 +15,7 @@ public class PezPanel extends JPanel {
     private PezJugador pezJugador;
     private List<PezEnemigo> enemigos;
     private List<Comida> comidas;
+    private Modelo modelo;
 
     private final Map<String, BufferedImage> imagenes = new HashMap<>();
     private final BufferedImage fondo;
@@ -75,6 +73,20 @@ public class PezPanel extends JPanel {
         } else {
             g.drawImage(imagen, x, y, lado, lado, null);
         }
+        if (modelo != null) {
+            dibujarMarcador(g);
+        }
+    }
+
+    private void dibujarMarcador(Graphics g) {
+        String texto = "Peces: " + modelo.getPecesComidos()
+                + "   Tamaño: " + modelo.getPezJugador().getSize()
+                + " / " + Opciones.TAMANO_VICTORIA;
+        g.setFont(new Font("SansSerif", Font.BOLD, 22));
+        g.setColor(Color.BLACK);
+        g.drawString(texto, 22, 37);    // sombra, para que se lea sobre cualquier fondo
+        g.setColor(Color.WHITE);
+        g.drawString(texto, 20, 35);
     }
 
     public void setPezJugador(PezJugador pezJugador) {
@@ -86,5 +98,8 @@ public class PezPanel extends JPanel {
     }
     public void setComidas(List<Comida> comidas) {
         this.comidas = comidas;
+    }
+    public void setModelo(Modelo modelo) {
+        this.modelo = modelo;
     }
 }

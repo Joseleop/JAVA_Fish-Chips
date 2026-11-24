@@ -34,6 +34,7 @@ public class Controlador implements KeyListener {
         panel.setPezJugador(pezJugador);
         panel.setEnemigos(modelo.getEnemigos());
         panel.setComidas(modelo.getComidas());
+        panel.setModelo(modelo);
 
         panel.addKeyListener(this);
         panel.setFocusable(true);
