@@ -62,4 +62,9 @@ public final class Opciones {
     public static final String SONIDO_COMER = "/sonido_comer.wav";
     public static final String SONIDO_COMIDO = "/sonido_comido.wav";
     public static final String MUSICA_FONDO = "/bg_musica.wav";
+
+    // El mayor enemigo posible = tamaño del jugador + margen
+    public static final int ENEMIGO_MARGEN_MAX = 5;
+    // 1.0 = tamaños uniformes; más alto = más peces pequeños y menos grandes
+    public static final double ENEMIGO_SESGO = 1.5;
 }

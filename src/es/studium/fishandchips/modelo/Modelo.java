@@ -36,14 +36,12 @@ public class Modelo {
     public PezEnemigo crearEnemigoAleatorio(int anchoPanel, int altoPanel) {
         int tamJugador = pezJugador.getSize();
 
-        // Rango de tamaño relativo al jugador, con mínimos y máximos absolutos
-        int minSize = Math.max(Opciones.ENEMIGO_TAMANO_MIN,
-                (int) Math.round(tamJugador * Opciones.ENEMIGO_RANGO_MIN));
+        int minSize = Opciones.ENEMIGO_TAMANO_MIN;
         int maxSize = Math.min(Opciones.TAMANO_VICTORIA,
-                Math.max(Opciones.ENEMIGO_TAMANO_MAX,
-                        (int) Math.round(tamJugador * Opciones.ENEMIGO_RANGO_MAX)));
+                Math.max(Opciones.ENEMIGO_TAMANO_MAX, tamJugador + Opciones.ENEMIGO_MARGEN_MAX));
 
-        int size = random.nextInt(maxSize - minSize + 1) + minSize;
+        double r = Math.pow(random.nextDouble(), Opciones.ENEMIGO_SESGO);
+        int size = minSize + (int) (r * (maxSize - minSize + 1));
         int lado = Entidad.ladoParaSize(size);
 
         int posX;
