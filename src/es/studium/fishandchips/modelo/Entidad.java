@@ -5,7 +5,7 @@ import es.studium.fishandchips.Opciones;
 abstract public class Entidad {
     private volatile int posX;
     private volatile int posY;
-    private int size;
+    private volatile int size;
     private String sprite;
 
     public Entidad(int posX, int posY, int size, String sprite){
@@ -47,8 +47,14 @@ abstract public class Entidad {
         return sprite;
     }
 
+    public static int ladoParaSize(int size) {
+        double lado = Opciones.LADO_MIN
+                + size * (Opciones.LADO_MAX - Opciones.LADO_MIN) / (double) Opciones.TAMANO_VICTORIA;
+        return (int) Math.round(lado * Opciones.ESCALA_GENERAL);
+    }
+
     public int getLado() {
-        return size * Opciones.ESCALA_PIXELES;
+        return ladoParaSize(size);
     }
 }
 

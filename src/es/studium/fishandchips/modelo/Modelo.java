@@ -34,9 +34,17 @@ public class Modelo {
     }
 
     public PezEnemigo crearEnemigoAleatorio(int anchoPanel, int altoPanel) {
-        int size = random.nextInt(Opciones.ENEMIGO_TAMANO_MAX - Opciones.ENEMIGO_TAMANO_MIN + 1)
-                + Opciones.ENEMIGO_TAMANO_MIN;
-        int lado = size * Opciones.ESCALA_PIXELES;
+        int tamJugador = pezJugador.getSize();
+
+        // Rango de tamaño relativo al jugador, con mínimos y máximos absolutos
+        int minSize = Math.max(Opciones.ENEMIGO_TAMANO_MIN,
+                (int) Math.round(tamJugador * Opciones.ENEMIGO_RANGO_MIN));
+        int maxSize = Math.min(Opciones.TAMANO_VICTORIA,
+                Math.max(Opciones.ENEMIGO_TAMANO_MAX,
+                        (int) Math.round(tamJugador * Opciones.ENEMIGO_RANGO_MAX)));
+
+        int size = random.nextInt(maxSize - minSize + 1) + minSize;
+        int lado = Entidad.ladoParaSize(size);
 
         int posX;
         int direccion;
@@ -49,7 +57,13 @@ public class Modelo {
         }
 
         int posY = random.nextInt(Math.max(1, altoPanel - lado));
-        int velocidad = (int) Math.max(1, Math.round(size * Opciones.VELOCIDAD_GENERAL));
+
+        // Velocidad creciente con el tamaño, pero acotada entre MIN y MAX
+        int velocidadBase = Opciones.ENEMIGO_VELOCIDAD_MIN
+                + size * (Opciones.ENEMIGO_VELOCIDAD_MAX - Opciones.ENEMIGO_VELOCIDAD_MIN)
+                / Opciones.TAMANO_VICTORIA;
+        int velocidad = (int) Math.max(1, Math.round(velocidadBase * Opciones.VELOCIDAD_GENERAL));
+
         String sprite = Opciones.SPRITES_ENEMIGOS[random.nextInt(Opciones.SPRITES_ENEMIGOS.length)];
 
         return new PezEnemigo(posX, posY, size, sprite, direccion, velocidad);

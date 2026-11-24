@@ -10,6 +10,6 @@ public class Comida extends Entidad {
 
     @Override
     public int getLado() {
-        return Opciones.COMIDA_LADO;   // la comida no escala con el size
+        return (int) Math.round(Opciones.COMIDA_LADO * Opciones.ESCALA_GENERAL);
     }
 }
