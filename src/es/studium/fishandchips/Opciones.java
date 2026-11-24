@@ -51,4 +51,9 @@ public final class Opciones {
 
     // Píxeles por cada punto de tamaño (size 5 = 40 px, size 50 = 400 px)
     public static final int ESCALA_PIXELES = 8;
+
+    // Sonidos
+    public static final String SONIDO_COMER = "/sonido_comer.wav";
+    public static final String SONIDO_COMIDO = "/sonido_comido.wav";
+    public static final String MUSICA_FONDO = "/bg_musica.wav";
 }

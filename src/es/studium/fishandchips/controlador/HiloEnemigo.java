@@ -19,7 +19,7 @@ public class HiloEnemigo implements Runnable {
 
     @Override
     public void run() {
-        while (!haSalido()) {
+        while (modelo.isEnPartida() && !haSalido()) {
             enemigo.setPosX(enemigo.getPosX() + enemigo.getDireccion() * enemigo.getVelocidad());
             panel.repaint();
             try {

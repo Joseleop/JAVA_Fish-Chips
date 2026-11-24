@@ -7,14 +7,13 @@ import es.studium.fishandchips.modelo.PezJugador;
 import es.studium.fishandchips.vista.PezPanel;
 import es.studium.fishandchips.vista.Vista;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.List;
 
 public class Controlador implements KeyListener {
 
-//    private static final int MOVIMIENTO = 10;
     final int TECLA_D = 68;
     final int TECLA_W = 87;
     final int TECLA_A = 65;
@@ -47,8 +46,10 @@ public class Controlador implements KeyListener {
         panel.requestFocusInWindow();
         panel.repaint();
 
+        Sonido.precargar(Opciones.SONIDO_COMER, Opciones.SONIDO_COMIDO);
+
         Thread hiloMovimientoJugador = new Thread(() -> {
-            while (true) {
+            while (modelo.isEnPartida()) {
                 moverJugador();
                 comprobarLimitesVentana();
                 comprobarColisiones();
@@ -57,23 +58,28 @@ public class Controlador implements KeyListener {
                     Thread.sleep(16);
                 } catch (InterruptedException e) {
                     System.err.println("ERROR - Operación interrumpida " + e.getMessage());
+                    break;
                 }
             }
+
+            SwingUtilities.invokeLater(() -> {
+                String mensaje;
+                if (modelo.isVictoria()) {
+                    mensaje = "¡Has ganado!\nPeces comidos: " + modelo.getPecesComidos();
+                } else {
+                    mensaje = "Te han comido\nTamaño alcanzado: " + pezJugador.getSize()
+                            + "\nPeces comidos: " + modelo.getPecesComidos();
+                }
+                Sonido.pararMusica();
+                JOptionPane.showMessageDialog(panel, mensaje, "Fin de la partida", JOptionPane.INFORMATION_MESSAGE);
+                System.exit(0);
+            });
         });
         hiloMovimientoJugador.start();
 
-        for (int i = 0; i < 6; i++) {
-            PezEnemigo enemigo = modelo.crearEnemigoAleatorio(panel.getWidth(),
-                    panel.getHeight());
-            modelo.getEnemigos().add(enemigo);
-            lanzarHiloEnemigo(enemigo);
-            System.out.println("Enemigo " + i + " | tamaño: " + enemigo.getSize() + " | velocidad: " + enemigo.getVelocidad());
-        }
+        new Thread(new HiloGenerador(modelo, panel)).start();
+        Sonido.iniciarMusica(Opciones.MUSICA_FONDO);
 
-    }
-
-    private void lanzarHiloEnemigo(PezEnemigo enemigo) {
-        new Thread(new HiloEnemigo(enemigo, modelo, panel)).start();
     }
 
     private void moverJugador() {
@@ -118,10 +124,16 @@ public class Controlador implements KeyListener {
                 if (enemigo.getSize() < pezJugador.getSize()) {
                     modelo.getEnemigos().remove(enemigo);
                     pezJugador.setSize(pezJugador.getSize() + enemigo.getSize());
-                    System.out.println("Comido. Tamaño: " + pezJugador.getSize());
+                    modelo.sumarPezComido();
+                    Sonido.reproducir(Opciones.SONIDO_COMER);
+                    if (pezJugador.getSize() >= Opciones.TAMANO_VICTORIA) {
+                        modelo.terminarPartida(true);
+                        return;
+                    }
                 } else {
-                    System.out.println("Te han comido. FIN DE PARTIDA");
-                    // aquí  meto el fin de partida
+                    Sonido.reproducir(Opciones.SONIDO_COMIDO);
+                    modelo.terminarPartida(false);
+                    return;
                 }
             }
         }

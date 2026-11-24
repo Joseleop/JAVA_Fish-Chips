@@ -17,7 +17,7 @@ public class HiloGenerador implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
+        while (modelo.isEnPartida()) {
             if (modelo.getEnemigos().size() < Opciones.GENERADOR_MAX_ENEMIGOS) {
                 PezEnemigo enemigo = modelo.crearEnemigoAleatorio(panel.getWidth(), panel.getHeight());
                 modelo.getEnemigos().add(enemigo);
