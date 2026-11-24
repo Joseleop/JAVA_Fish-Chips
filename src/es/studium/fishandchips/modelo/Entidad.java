@@ -1,5 +1,7 @@
 package es.studium.fishandchips.modelo;
 
+import es.studium.fishandchips.Opciones;
+
 abstract public class Entidad {
     private volatile int posX;
     private volatile int posY;
@@ -43,6 +45,10 @@ abstract public class Entidad {
 
     public String getSprite() {
         return sprite;
+    }
+
+    public int getLado() {
+        return size * Opciones.ESCALA_PIXELES;
     }
 }
 

@@ -1,6 +1,7 @@
 package es.studium.fishandchips.vista;
 
 import es.studium.fishandchips.Opciones;
+import es.studium.fishandchips.modelo.Entidad;
 import es.studium.fishandchips.modelo.PezEnemigo;
 import es.studium.fishandchips.modelo.PezJugador;
 
@@ -8,41 +9,62 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PezPanel extends JPanel {
     private PezJugador pezJugador;
-    private BufferedImage imagenPezJ;
-
     private List<PezEnemigo> enemigos;
-    private BufferedImage imagenPezE;
+
+    private final Map<String, BufferedImage> imagenes = new HashMap<>();
+    private final BufferedImage fondo;
 
     public PezPanel() {
+        imagenes.put(Opciones.SPRITE_JUGADOR, leerImagen(Opciones.SPRITE_JUGADOR));
+        for (String sprite : Opciones.SPRITES_ENEMIGOS) {
+            imagenes.put(sprite, leerImagen(sprite));
+        }
+        fondo = leerImagen(Opciones.SPRITE_FONDO);
+    }
+
+    private BufferedImage leerImagen(String ruta) {
         try {
-            URL pathJugador = getClass().getResource(Opciones.SPRITE_JUGADOR);
-            URL pathEnemigo = getClass().getResource(Opciones.SPRITE_ENEMIGO);
-            imagenPezJ = ImageIO.read(pathJugador);
-            imagenPezE = ImageIO.read(pathEnemigo);
+            return ImageIO.read(getClass().getResource(ruta));
         } catch (Exception e) {
-            System.out.println("ERROR EN PEZPANEL: " + e.getMessage());
+            System.out.println("ERROR cargando " + ruta + ": " + e.getMessage());
+            return null;
         }
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (pezJugador != null) {
-            int posXJugador = this.pezJugador.getPosX();
-            int posYJugador = this.pezJugador.getPosY();
-            g.drawImage(imagenPezJ, posXJugador, posYJugador, null);
+        if (fondo != null) {
+            g.drawImage(fondo, 0, 0, getWidth(), getHeight(), null);
         }
-        if(enemigos != null) {
+        if (enemigos != null) {
             for (PezEnemigo enemigo : enemigos) {
-                int posXEnemigo = enemigo.getPosX();
-                int posYEnemigo = enemigo.getPosY();
-                g.drawImage(imagenPezE, posXEnemigo, posYEnemigo, null);
+                dibujarPez(g, enemigo, enemigo.getDireccion() < 0);
             }
+        }
+        if (pezJugador != null) {
+            dibujarPez(g, pezJugador, false);
+        }
+    }
+
+    private void dibujarPez(Graphics g, Entidad pez, boolean volteado) {
+        BufferedImage imagen = imagenes.get(pez.getSprite());
+        if (imagen == null) {
+            return;
+        }
+        int x = pez.getPosX();
+        int y = pez.getPosY();
+        int lado = pez.getLado();
+        if (volteado) {
+            g.drawImage(imagen, x + lado, y, -lado, lado, null);   // ancho negativo = espejo
+        } else {
+            g.drawImage(imagen, x, y, lado, lado, null);
         }
     }
 
@@ -53,21 +75,4 @@ public class PezPanel extends JPanel {
     public void setEnemigos(List<PezEnemigo> enemigos) {
         this.enemigos = enemigos;
     }
-
-    public int getAltoImagenJugador() {
-        return imagenPezJ.getHeight();
-    }
-
-    public int getAnchoImagenJugador() {
-        return imagenPezJ.getWidth();
-    }
-
-    public int getAltoImagenEnemigo() {
-        return imagenPezE.getHeight();
-    }
-
-    public int getAnchoImagenEnemigo() {
-        return imagenPezE.getWidth();
-    }
-
 }

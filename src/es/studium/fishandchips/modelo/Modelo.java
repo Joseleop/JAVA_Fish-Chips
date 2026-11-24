@@ -13,13 +13,13 @@ public class Modelo {
 
     private List<PezEnemigo> enemigos = new CopyOnWriteArrayList<>();
 
-    public Modelo(){
+    public Modelo() {
         pezJugador = new PezJugador(Opciones.JUGADOR_POS_X_INICIAL, Opciones.JUGADOR_POS_Y_INICIAL,
                 Opciones.JUGADOR_TAMANO_INICIAL,
                 Opciones.SPRITE_JUGADOR);
-        }
+    }
 
-    public PezJugador getPezJugador(){
+    public PezJugador getPezJugador() {
         return this.pezJugador;
     }
 
@@ -31,23 +31,25 @@ public class Modelo {
         this.enemigos = enemigos;
     }
 
-    public PezEnemigo crearEnemigoAleatorio(int anchoPanel, int altoPanel){
-        boolean entraPorIzquierda = random.nextBoolean();
+    public PezEnemigo crearEnemigoAleatorio(int anchoPanel, int altoPanel) {
+        int size = random.nextInt(Opciones.ENEMIGO_TAMANO_MAX - Opciones.ENEMIGO_TAMANO_MIN + 1)
+                + Opciones.ENEMIGO_TAMANO_MIN;
+        int lado = size * Opciones.ESCALA_PIXELES;
 
         int posX;
         int direccion;
-
-        if (entraPorIzquierda) {
-            posX = -Opciones.ENEMIGO_ANCHO_APROX;
+        if (random.nextBoolean()) {
+            posX = -lado;
             direccion = Opciones.ENEMIGO_DIRECCION_DERECHA;
         } else {
             posX = anchoPanel;
             direccion = Opciones.ENEMIGO_DIRECCION_IZQUIERDA;
         }
-        int posY = random.nextInt(altoPanel - Opciones.ENEMIGO_ANCHO_APROX);
-        int size =
-                random.nextInt(Opciones.ENEMIGO_TAMANO_MAX - Opciones.ENEMIGO_TAMANO_MIN + 1) + Opciones.ENEMIGO_TAMANO_MIN;
-        int velocidad = (int) Math.max(1, Math.round(size * Opciones.VELOCIDAD_GENERAL));
 
-        return new PezEnemigo(posX, posY, size, Opciones.SPRITE_ENEMIGO, direccion, velocidad);    }
+        int posY = random.nextInt(Math.max(1, altoPanel - lado));
+        int velocidad = (int) Math.max(1, Math.round(size * Opciones.VELOCIDAD_GENERAL));
+        String sprite = Opciones.SPRITES_ENEMIGOS[random.nextInt(Opciones.SPRITES_ENEMIGOS.length)];
+
+        return new PezEnemigo(posX, posY, size, sprite, direccion, velocidad);
+    }
 }

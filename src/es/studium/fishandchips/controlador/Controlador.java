@@ -7,6 +7,7 @@ import es.studium.fishandchips.modelo.PezJugador;
 import es.studium.fishandchips.vista.PezPanel;
 import es.studium.fishandchips.vista.Vista;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
@@ -25,9 +26,6 @@ public class Controlador implements KeyListener {
     private final PezJugador pezJugador;
     private final PezPanel panel;
 
-    private final int anchoImagen;
-    private final int altoImagen;
-
     volatile boolean dirArriba = false;
     volatile boolean dirAbajo = false;
     volatile boolean dirIzquierda = false;
@@ -40,8 +38,6 @@ public class Controlador implements KeyListener {
         this.pezJugador = modelo.getPezJugador();
 
         this.panel = vista.getPezPanel();
-        this.anchoImagen = panel.getAnchoImagenJugador();
-        this.altoImagen = panel.getAltoImagenJugador();
 
         panel.setPezJugador(pezJugador);
         panel.setEnemigos(modelo.getEnemigos());
@@ -55,6 +51,7 @@ public class Controlador implements KeyListener {
             while (true) {
                 moverJugador();
                 comprobarLimitesVentana();
+                comprobarColisiones();
                 panel.repaint();
                 try {
                     Thread.sleep(16);
@@ -76,32 +73,8 @@ public class Controlador implements KeyListener {
     }
 
     private void lanzarHiloEnemigo(PezEnemigo enemigo) {
-        Thread hiloEnemigo = new Thread(() -> {
-            boolean enPantalla = true;
-            while (enPantalla) {
-                enemigo.setPosX(enemigo.getPosX() + enemigo.getDireccion() * enemigo.getVelocidad());
-                enPantalla = !haSalido(enemigo);
-                panel.repaint();
-                try {
-                    Thread.sleep(16);
-                } catch (InterruptedException e) {
-                    System.err.println("ERROR - Operación interrumpida " + e.getMessage());
-                }
-            }
-            modelo.getEnemigos().remove(enemigo);
-            panel.repaint();
-        });
-        hiloEnemigo.start();
+        new Thread(new HiloEnemigo(enemigo, modelo, panel)).start();
     }
-
-    private boolean haSalido(PezEnemigo enemigo) {
-        if (enemigo.getDireccion() > 0) {
-            return enemigo.getPosX() > panel.getWidth();
-        } else {
-            return enemigo.getPosX() + panel.getAnchoImagenEnemigo() < 0;
-        }
-    }
-
 
     private void moverJugador() {
         if (dirDerecha) {
@@ -124,13 +97,33 @@ public class Controlador implements KeyListener {
 
         if (pezJugador.getPosX() < 0) {
             pezJugador.setPosX(0);
-        } else if ((pezJugador.getPosX() + anchoImagen) > anchoVentana) {
-            pezJugador.setPosX(anchoVentana - anchoImagen);
+        } else if ((pezJugador.getPosX() + pezJugador.getLado()) > anchoVentana) {
+            pezJugador.setPosX(anchoVentana - pezJugador.getLado());
         }
         if (pezJugador.getPosY() < 0) {
             pezJugador.setPosY(0);
-        } else if ((pezJugador.getPosY() + altoImagen) > altoVentana) {
-            pezJugador.setPosY(altoVentana - altoImagen);
+        } else if ((pezJugador.getPosY() + pezJugador.getLado()) > altoVentana) {
+            pezJugador.setPosY(altoVentana - pezJugador.getLado());
+        }
+    }
+    private void comprobarColisiones() {
+        Rectangle rJugador = new Rectangle(
+                pezJugador.getPosX(), pezJugador.getPosY(), pezJugador.getLado(), pezJugador.getLado());
+
+        for (PezEnemigo enemigo : modelo.getEnemigos()) {
+            Rectangle rEnemigo = new Rectangle(
+                    enemigo.getPosX(), enemigo.getPosY(), enemigo.getLado(), enemigo.getLado());
+
+            if (rJugador.intersects(rEnemigo)) {
+                if (enemigo.getSize() < pezJugador.getSize()) {
+                    modelo.getEnemigos().remove(enemigo);
+                    pezJugador.setSize(pezJugador.getSize() + enemigo.getSize());
+                    System.out.println("Comido. Tamaño: " + pezJugador.getSize());
+                } else {
+                    System.out.println("Te han comido. FIN DE PARTIDA");
+                    // aquí  meto el fin de partida
+                }
+            }
         }
     }
 
