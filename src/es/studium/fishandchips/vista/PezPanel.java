@@ -1,5 +1,6 @@
 package es.studium.fishandchips.vista;
 
+import es.studium.fishandchips.modelo.PezEnemigo;
 import es.studium.fishandchips.modelo.PezJugador;
 
 import javax.imageio.ImageIO;
@@ -7,39 +8,65 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.List;
 
 public class PezPanel extends JPanel {
     private PezJugador pezJugador;
     private BufferedImage imagenPezJ;
 
-    public PezPanel(){
+    private List<PezEnemigo> enemigos;
+    private BufferedImage imagenPezE;
+
+    public PezPanel() {
         try {
-            URL path = getClass().getResource("/pez_jugador_01.png");
-            imagenPezJ = ImageIO.read(path);
+            URL pathJugador = getClass().getResource("/pez_jugador_01.png");
+            URL pathEnemigo = getClass().getResource("/pez_enemigo_01.png");
+            imagenPezJ = ImageIO.read(pathJugador);
+            imagenPezE = ImageIO.read(pathEnemigo);
         } catch (Exception e) {
             System.out.println("ERROR EN PEZPANEL: " + e.getMessage());
         }
     }
 
     @Override
-    protected void paintComponent(Graphics g){
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if(pezJugador != null) {
-            int posX = this.pezJugador.getPosX();
-            int posY = this.pezJugador.getPosY();
-            g.drawImage(imagenPezJ, posX, posY, null);
+        if (pezJugador != null) {
+            int posXJugador = this.pezJugador.getPosX();
+            int posYJugador = this.pezJugador.getPosY();
+            g.drawImage(imagenPezJ, posXJugador, posYJugador, null);
+        }
+        if(enemigos != null) {
+            for (PezEnemigo enemigo : enemigos) {
+                int posXEnemigo = enemigo.getPosX();
+                int posYEnemigo = enemigo.getPosY();
+                g.drawImage(imagenPezE, posXEnemigo, posYEnemigo, null);
+            }
         }
     }
 
-    public void setPezJugador(PezJugador pezJugador){
+    public void setPezJugador(PezJugador pezJugador) {
         this.pezJugador = pezJugador;
     }
 
-    public int getAltoImagen(){
+    public void setEnemigos(List<PezEnemigo> enemigos) {
+        this.enemigos = enemigos;
+    }
+
+    public int getAltoImagenJugador() {
         return imagenPezJ.getHeight();
     }
-    public int getAnchoImagen(){
+
+    public int getAnchoImagenJugador() {
         return imagenPezJ.getWidth();
+    }
+
+    public int getAltoImagenEnemigo() {
+        return imagenPezE.getHeight();
+    }
+
+    public int getAnchoImagenEnemigo() {
+        return imagenPezE.getWidth();
     }
 
 }

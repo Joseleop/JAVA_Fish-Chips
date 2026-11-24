@@ -1,51 +1,56 @@
 package es.studium.fishandchips.controlador;
 
 import es.studium.fishandchips.modelo.Modelo;
+import es.studium.fishandchips.modelo.PezEnemigo;
 import es.studium.fishandchips.modelo.PezJugador;
 import es.studium.fishandchips.vista.PezPanel;
 import es.studium.fishandchips.vista.Vista;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.List;
 
 public class Controlador implements KeyListener {
+
+    private static final int MOVIMIENTO = 10;
+    final int TECLA_D = 68;
+    final int TECLA_W = 87;
+    final int TECLA_A = 65;
+    final int TECLA_S = 83;
 
     private final Vista vista;
     private final Modelo modelo;
 
     private final PezJugador pezJugador;
     private final PezPanel panel;
+
     private final int anchoImagen;
     private final int altoImagen;
-
-    final int TECLA_D = 68;
-    final int TECLA_W = 87;
-    final int TECLA_A = 65;
-    final int TECLA_S = 83;
 
     volatile boolean dirArriba = false;
     volatile boolean dirAbajo = false;
     volatile boolean dirIzquierda = false;
     volatile boolean dirDerecha = false;
 
-    private static final int MOVIMIENTO = 10;
-
-    public Controlador(Vista vista, Modelo modelo){
+    public Controlador(Vista vista, Modelo modelo) {
         this.vista = vista;
         this.modelo = modelo;
 
         this.pezJugador = modelo.getPezJugador();
-        this.panel = vista.getPezPanel();
-        this.anchoImagen = panel.getAnchoImagen();
-        this.altoImagen = panel.getAltoImagen();
 
-        panel.setPezJugador(modelo.getPezJugador());
+        this.panel = vista.getPezPanel();
+        this.anchoImagen = panel.getAnchoImagenJugador();
+        this.altoImagen = panel.getAltoImagenJugador();
+
+        panel.setPezJugador(pezJugador);
+        panel.setEnemigos(modelo.getEnemigos());
+
         panel.addKeyListener(this);
         panel.setFocusable(true);
         panel.requestFocusInWindow();
         panel.repaint();
 
-        Thread hiloMovimientoJugador = new Thread(()->{
+        Thread hiloMovimientoJugador = new Thread(() -> {
             while (true) {
                 moverJugador();
                 comprobarLimitesVentana();
@@ -59,8 +64,46 @@ public class Controlador implements KeyListener {
         });
         hiloMovimientoJugador.start();
 
+//        for (PezEnemigo enemigo : modelo.getEnemigos()) {
+//            lanzarHiloEnemigo(enemigo);
+//        }
+        PezEnemigo enemigo = modelo.crearEnemigoAleatorio(panel.getWidth(), panel.getHeight());
+        modelo.getEnemigos().add(enemigo);
+        lanzarHiloEnemigo(enemigo);
+
     }
-    private void moverJugador(){
+
+    private void lanzarHiloEnemigo(PezEnemigo enemigo) {
+        Thread hiloEnemigo = new Thread(() -> {
+            boolean enPantalla = true;
+            while (enPantalla) {
+                enemigo.setPosX(enemigo.getPosX() + enemigo.getDireccion() * enemigo.getVelocidad());
+                enPantalla = !haSalido(enemigo);
+                panel.repaint();
+                try {
+                    Thread.sleep(16);
+                } catch (InterruptedException e) {
+                    System.err.println("ERROR - Operación interrumpida " + e.getMessage());
+                }
+            }
+            System.out.println("Hilo enemigo terminado: " + Thread.currentThread().getName());
+            modelo.getEnemigos().remove(enemigo);
+            System.out.println(modelo.getEnemigos().size());
+            panel.repaint();
+        });
+        hiloEnemigo.start();
+    }
+
+    private boolean haSalido(PezEnemigo enemigo) {
+        if (enemigo.getDireccion() > 0) {
+            return enemigo.getPosX() > panel.getWidth();
+        } else {
+            return enemigo.getPosX() + panel.getAnchoImagenEnemigo() < 0;
+        }
+    }
+
+
+    private void moverJugador() {
         if (dirDerecha) {
             pezJugador.setPosX(pezJugador.getPosX() + MOVIMIENTO);
         }
@@ -74,7 +117,8 @@ public class Controlador implements KeyListener {
             pezJugador.setPosY(pezJugador.getPosY() + MOVIMIENTO);
         }
     }
-    private void comprobarLimitesVentana(){
+
+    private void comprobarLimitesVentana() {
         final int anchoVentana = panel.getWidth();
         final int altoVentana = panel.getHeight();
 
@@ -92,7 +136,7 @@ public class Controlador implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        switch (e.getKeyCode()){
+        switch (e.getKeyCode()) {
             case TECLA_W -> {
                 dirArriba = true;
             }
