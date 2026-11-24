@@ -19,7 +19,6 @@ public class Controlador implements KeyListener {
     final int TECLA_A = 65;
     final int TECLA_S = 83;
 
-    private final Vista vista;
     private final Modelo modelo;
 
     private final PezJugador pezJugador;
@@ -31,7 +30,6 @@ public class Controlador implements KeyListener {
     volatile boolean dirDerecha = false;
 
     public Controlador(Vista vista, Modelo modelo) {
-        this.vista = vista;
         this.modelo = modelo;
 
         this.pezJugador = modelo.getPezJugador();
@@ -43,11 +41,13 @@ public class Controlador implements KeyListener {
 
         panel.addKeyListener(this);
         panel.setFocusable(true);
-        panel.requestFocusInWindow();
-        panel.repaint();
 
         Sonido.precargar(Opciones.SONIDO_COMER, Opciones.SONIDO_COMIDO);
 
+        new GestionPantallaBienvenida(vista, this);
+    }
+
+    public void iniciarPartida() {
         Thread hiloMovimientoJugador = new Thread(() -> {
             while (modelo.isEnPartida()) {
                 moverJugador();
@@ -55,7 +55,7 @@ public class Controlador implements KeyListener {
                 comprobarColisiones();
                 panel.repaint();
                 try {
-                    Thread.sleep(16);
+                    Thread.sleep(Opciones.PAUSA_MS);
                 } catch (InterruptedException e) {
                     System.err.println("ERROR - Operación interrumpida " + e.getMessage());
                     break;
@@ -79,7 +79,7 @@ public class Controlador implements KeyListener {
 
         new Thread(new HiloGenerador(modelo, panel)).start();
         Sonido.iniciarMusica(Opciones.MUSICA_FONDO);
-
+        panel.requestFocusInWindow();
     }
 
     private void moverJugador() {
@@ -112,6 +112,7 @@ public class Controlador implements KeyListener {
             pezJugador.setPosY(altoVentana - pezJugador.getLado());
         }
     }
+
     private void comprobarColisiones() {
         Rectangle rJugador = new Rectangle(
                 pezJugador.getPosX(), pezJugador.getPosY(), pezJugador.getLado(), pezJugador.getLado());
@@ -142,36 +143,20 @@ public class Controlador implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case TECLA_W -> {
-                dirArriba = true;
-            }
-            case TECLA_S -> {
-                dirAbajo = true;
-            }
-            case TECLA_A -> {
-                dirIzquierda = true;
-            }
-            case TECLA_D -> {
-                dirDerecha = true;
-            }
+            case TECLA_W -> dirArriba = true;
+            case TECLA_S -> dirAbajo = true;
+            case TECLA_A -> dirIzquierda = true;
+            case TECLA_D -> dirDerecha = true;
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case TECLA_W -> {
-                dirArriba = false;
-            }
-            case TECLA_S -> {
-                dirAbajo = false;
-            }
-            case TECLA_A -> {
-                dirIzquierda = false;
-            }
-            case TECLA_D -> {
-                dirDerecha = false;
-            }
+            case TECLA_W -> dirArriba = false;
+            case TECLA_S -> dirAbajo = false;
+            case TECLA_A -> dirIzquierda = false;
+            case TECLA_D -> dirDerecha = false;
         }
     }
 
