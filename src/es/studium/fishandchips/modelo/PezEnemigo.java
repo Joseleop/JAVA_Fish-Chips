@@ -4,7 +4,8 @@ public class PezEnemigo extends Entidad {
     private int direccion;
     private int velocidad;
 
-    public PezEnemigo(int posX, int posY, int size, String sprite, int direccion, int velocidad) {
+    public PezEnemigo(int posX, int posY, int size, String sprite, int direccion,
+                      int velocidad) {
         super(posX, posY, size, sprite);
         this.direccion = direccion;
         this.velocidad = velocidad;

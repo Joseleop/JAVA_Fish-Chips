@@ -1,5 +1,6 @@
 package es.studium.fishandchips.controlador;
 
+import es.studium.fishandchips.Opciones;
 import es.studium.fishandchips.modelo.Modelo;
 import es.studium.fishandchips.modelo.PezEnemigo;
 import es.studium.fishandchips.modelo.PezJugador;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class Controlador implements KeyListener {
 
-    private static final int MOVIMIENTO = 10;
+//    private static final int MOVIMIENTO = 10;
     final int TECLA_D = 68;
     final int TECLA_W = 87;
     final int TECLA_A = 65;
@@ -64,12 +65,13 @@ public class Controlador implements KeyListener {
         });
         hiloMovimientoJugador.start();
 
-//        for (PezEnemigo enemigo : modelo.getEnemigos()) {
-//            lanzarHiloEnemigo(enemigo);
-//        }
-        PezEnemigo enemigo = modelo.crearEnemigoAleatorio(panel.getWidth(), panel.getHeight());
-        modelo.getEnemigos().add(enemigo);
-        lanzarHiloEnemigo(enemigo);
+        for (int i = 0; i < 6; i++) {
+            PezEnemigo enemigo = modelo.crearEnemigoAleatorio(panel.getWidth(),
+                    panel.getHeight());
+            modelo.getEnemigos().add(enemigo);
+            lanzarHiloEnemigo(enemigo);
+            System.out.println("Enemigo " + i + " | tamaño: " + enemigo.getSize() + " | velocidad: " + enemigo.getVelocidad());
+        }
 
     }
 
@@ -86,9 +88,7 @@ public class Controlador implements KeyListener {
                     System.err.println("ERROR - Operación interrumpida " + e.getMessage());
                 }
             }
-            System.out.println("Hilo enemigo terminado: " + Thread.currentThread().getName());
             modelo.getEnemigos().remove(enemigo);
-            System.out.println(modelo.getEnemigos().size());
             panel.repaint();
         });
         hiloEnemigo.start();
@@ -105,16 +105,16 @@ public class Controlador implements KeyListener {
 
     private void moverJugador() {
         if (dirDerecha) {
-            pezJugador.setPosX(pezJugador.getPosX() + MOVIMIENTO);
+            pezJugador.setPosX(pezJugador.getPosX() + Opciones.JUGADOR_MOVIMIENTO);
         }
         if (dirIzquierda) {
-            pezJugador.setPosX(pezJugador.getPosX() - MOVIMIENTO);
+            pezJugador.setPosX(pezJugador.getPosX() - Opciones.JUGADOR_MOVIMIENTO);
         }
         if (dirArriba) {
-            pezJugador.setPosY(pezJugador.getPosY() - MOVIMIENTO);
+            pezJugador.setPosY(pezJugador.getPosY() - Opciones.JUGADOR_MOVIMIENTO);
         }
         if (dirAbajo) {
-            pezJugador.setPosY(pezJugador.getPosY() + MOVIMIENTO);
+            pezJugador.setPosY(pezJugador.getPosY() + Opciones.JUGADOR_MOVIMIENTO);
         }
     }
 

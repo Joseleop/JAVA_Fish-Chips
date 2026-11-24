@@ -1,5 +1,6 @@
 package es.studium.fishandchips.vista;
 
+import es.studium.fishandchips.Opciones;
 import es.studium.fishandchips.modelo.PezEnemigo;
 import es.studium.fishandchips.modelo.PezJugador;
 
@@ -19,8 +20,8 @@ public class PezPanel extends JPanel {
 
     public PezPanel() {
         try {
-            URL pathJugador = getClass().getResource("/pez_jugador_01.png");
-            URL pathEnemigo = getClass().getResource("/pez_enemigo_01.png");
+            URL pathJugador = getClass().getResource(Opciones.SPRITE_JUGADOR);
+            URL pathEnemigo = getClass().getResource(Opciones.SPRITE_ENEMIGO);
             imagenPezJ = ImageIO.read(pathJugador);
             imagenPezE = ImageIO.read(pathEnemigo);
         } catch (Exception e) {

@@ -1,8 +1,8 @@
 package es.studium.fishandchips.modelo;
 
 abstract public class Entidad {
-    private int posX;
-    private int posY;
+    private volatile int posX;
+    private volatile int posY;
     private int size;
     private String sprite;
 

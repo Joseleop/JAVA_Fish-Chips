@@ -1,12 +1,14 @@
 package es.studium.fishandchips.vista;
 
+import es.studium.fishandchips.Opciones;
+
 import javax.swing.*;
 
 public class Vista extends JFrame{
-    PezPanel pezPanel = new PezPanel();
+    private PezPanel pezPanel = new PezPanel();
     public Vista(){
         setTitle("Fish & Chips");
-        setSize(1280,720);
+        setSize(Opciones.VENTANA_ANCHO,Opciones.VENTANA_ALTO);
         setResizable(false);
         setLocationRelativeTo(null);
         add(pezPanel);
