@@ -7,14 +7,11 @@ import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Modelo {
+    private final Random random = new Random();
     private int pecesComidos = 0;
     private volatile boolean enPartida = true;
     private volatile boolean victoria = false;
-
     private PezJugador pezJugador;
-
-    private final Random random = new Random();
-
     private List<PezEnemigo> enemigos = new CopyOnWriteArrayList<>();
 
     public Modelo() {
@@ -56,6 +53,7 @@ public class Modelo {
 
         return new PezEnemigo(posX, posY, size, sprite, direccion, velocidad);
     }
+
     public synchronized int getPecesComidos() {
         return pecesComidos;
     }
@@ -63,6 +61,7 @@ public class Modelo {
     public synchronized void sumarPezComido() {
         pecesComidos++;
     }
+
     public boolean isEnPartida() {
         return enPartida;
     }
@@ -74,5 +73,15 @@ public class Modelo {
     public void terminarPartida(boolean victoria) {
         this.victoria = victoria;
         this.enPartida = false;
+    }
+
+    public synchronized void reiniciar() {
+        enemigos.clear();
+        pezJugador.setPosX(Opciones.JUGADOR_POS_X_INICIAL);
+        pezJugador.setPosY(Opciones.JUGADOR_POS_Y_INICIAL);
+        pezJugador.setSize(Opciones.JUGADOR_TAMANO_INICIAL);
+        pecesComidos = 0;
+        victoria = false;
+        enPartida = true;
     }
 }

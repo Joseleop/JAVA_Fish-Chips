@@ -48,6 +48,10 @@ public class Controlador implements KeyListener {
     }
 
     public void iniciarPartida() {
+        dirArriba = false;
+        dirAbajo = false;
+        dirIzquierda = false;
+        dirDerecha = false;
         Thread hiloMovimientoJugador = new Thread(() -> {
             while (modelo.isEnPartida()) {
                 moverJugador();
@@ -71,8 +75,17 @@ public class Controlador implements KeyListener {
                             + "\nPeces comidos: " + modelo.getPecesComidos();
                 }
                 Sonido.pararMusica();
-                JOptionPane.showMessageDialog(panel, mensaje, "Fin de la partida", JOptionPane.INFORMATION_MESSAGE);
-                System.exit(0);
+                Object[] opciones = {"Jugar otra vez", "Salir"};
+                int eleccion = JOptionPane.showOptionDialog(panel, mensaje, "Fin de la partida",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                        null, opciones, opciones[0]);
+
+                if (eleccion == 0) {
+                    modelo.reiniciar();
+                    iniciarPartida();
+                } else {
+                    System.exit(0);
+                }
             });
         });
         hiloMovimientoJugador.start();
