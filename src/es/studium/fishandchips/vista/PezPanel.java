@@ -14,7 +14,7 @@ public class PezPanel extends JPanel {
 
     public PezPanel(){
         try {
-            URL path = getClass().getResource("/pezjugador01.png");
+            URL path = getClass().getResource("/pez_jugador_01.png");
             imagenPezJ = ImageIO.read(path);
         } catch (Exception e) {
             System.out.println("ERROR EN PEZPANEL: " + e.getMessage());

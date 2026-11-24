@@ -8,7 +8,7 @@ public class Modelo {
     private static final int TAMANO_INICIAL = 5;
 
     public Modelo(){
-        pezJugador = new PezJugador(POS_X_INICIAL, POS_Y_INICIAL, TAMANO_INICIAL, "/pezjugador01.png");
+        pezJugador = new PezJugador(POS_X_INICIAL, POS_Y_INICIAL, TAMANO_INICIAL, "/pez_jugador_01.png");
     }
 
     public PezJugador getPezJugador(){

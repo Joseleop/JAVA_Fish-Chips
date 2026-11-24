@@ -13,6 +13,11 @@ public class Controlador implements KeyListener {
     private final Vista vista;
     private final Modelo modelo;
 
+    private final PezJugador pezJugador;
+    private final PezPanel panel;
+    private final int anchoImagen;
+    private final int altoImagen;
+
     final int TECLA_D = 68;
     final int TECLA_W = 87;
     final int TECLA_A = 65;
@@ -29,12 +34,10 @@ public class Controlador implements KeyListener {
         this.vista = vista;
         this.modelo = modelo;
 
-        PezJugador pezJugador = modelo.getPezJugador();
-        PezPanel panel = vista.getPezPanel();
-
-
-        final int anchoImagen = panel.getAnchoImagen();
-        final int altoImagen = panel.getAltoImagen();
+        this.pezJugador = modelo.getPezJugador();
+        this.panel = vista.getPezPanel();
+        this.anchoImagen = panel.getAnchoImagen();
+        this.altoImagen = panel.getAltoImagen();
 
         panel.setPezJugador(modelo.getPezJugador());
         panel.addKeyListener(this);
@@ -44,32 +47,8 @@ public class Controlador implements KeyListener {
 
         Thread hiloMovimientoJugador = new Thread(()->{
             while (true) {
-                final int anchoVentana = panel.getWidth();
-                final int altoVentana = panel.getHeight();
-                if (dirDerecha) {
-                    pezJugador.setPosX(pezJugador.getPosX() + MOVIMIENTO);
-                }
-                if (dirIzquierda) {
-                    pezJugador.setPosX(pezJugador.getPosX() - MOVIMIENTO);
-                }
-                if (dirArriba) {
-                    pezJugador.setPosY(pezJugador.getPosY() - MOVIMIENTO);
-                }
-                if (dirAbajo) {
-                    pezJugador.setPosY(pezJugador.getPosY() + MOVIMIENTO);
-                }
-
-                if (pezJugador.getPosX() < 0) {
-                    pezJugador.setPosX(0);
-                } else if ((pezJugador.getPosX() + anchoImagen) > anchoVentana) {
-                    pezJugador.setPosX(anchoVentana - anchoImagen);
-                }
-                if (pezJugador.getPosY() < 0) {
-                    pezJugador.setPosY(0);
-                } else if ((pezJugador.getPosY() + altoImagen) > altoVentana) {
-                    pezJugador.setPosY(altoVentana - altoImagen);
-                }
-
+                moverJugador();
+                comprobarLimitesVentana();
                 panel.repaint();
                 try {
                     Thread.sleep(16);
@@ -80,6 +59,35 @@ public class Controlador implements KeyListener {
         });
         hiloMovimientoJugador.start();
 
+    }
+    private void moverJugador(){
+        if (dirDerecha) {
+            pezJugador.setPosX(pezJugador.getPosX() + MOVIMIENTO);
+        }
+        if (dirIzquierda) {
+            pezJugador.setPosX(pezJugador.getPosX() - MOVIMIENTO);
+        }
+        if (dirArriba) {
+            pezJugador.setPosY(pezJugador.getPosY() - MOVIMIENTO);
+        }
+        if (dirAbajo) {
+            pezJugador.setPosY(pezJugador.getPosY() + MOVIMIENTO);
+        }
+    }
+    private void comprobarLimitesVentana(){
+        final int anchoVentana = panel.getWidth();
+        final int altoVentana = panel.getHeight();
+
+        if (pezJugador.getPosX() < 0) {
+            pezJugador.setPosX(0);
+        } else if ((pezJugador.getPosX() + anchoImagen) > anchoVentana) {
+            pezJugador.setPosX(anchoVentana - anchoImagen);
+        }
+        if (pezJugador.getPosY() < 0) {
+            pezJugador.setPosY(0);
+        } else if ((pezJugador.getPosY() + altoImagen) > altoVentana) {
+            pezJugador.setPosY(altoVentana - altoImagen);
+        }
     }
 
     @Override
